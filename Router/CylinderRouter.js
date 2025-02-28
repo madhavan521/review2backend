@@ -11,4 +11,4 @@ cylinderrouter.post('/create',ProtectRouter, postdealercylinderpurchase);
 // cylinderentryrouter.put('/update/:id', ProtectRouter, updatedata);
 // cylinderentryrouter.delete('/delete/:id', ProtectRouter, deletedata);
 
-module.exports = cylinderentryrouter;
+module.exports = cylinderrouter;
