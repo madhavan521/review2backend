@@ -83,131 +83,107 @@ const postdealercylinderpurchase = async (req, res) => {
     }  
 };
 
-const postdealerdelivery = async (req, res) => {  
-    const { cylinderType, fullCylinder, emptyCylinder, username } = req.body;  
+// const postdealerdelivery = async (req, res) => {  
+//     const { cylinderType, fullCylinder, emptyCylinder, username } = req.body;  
 
-    try {  
-        // Get the dealer's 
-        const UserId = req.user._id;  
-        const dealerdata = await Dealer.findById(UserId);  
-        if (!dealerdata) {  
-            return res.status(404).send("Dealer not found");  
-        }  
+//     try {  
+//         // Get the dealer's 
+//         const UserId = req.user._id;  
+//         const dealerdata = await Dealer.findById(UserId);  
+//         if (!dealerdata) {  
+//             return res.status(404).send("Dealer not found");  
+//         }  
 
-        // Check if the reseller exists in the dealer's resellers list  
-        const resellerdata = dealerdata.Reseller.find(item => item.username === username);  
-        if (!resellerdata) {  
-            return res.status(404).send("Reseller not found");  
-        }  
-        const resellers = await Reseller.findOne({ username });  
-        if (!resellers) {  
-            return res.status(404).send("Reseller data not found in the database");  
-        }  
+//         // Check if the reseller exists in the dealer's resellers list  
+//         const resellerdata = dealerdata.Reseller.find(item => item.username === username);  
+//         if (!resellerdata) {  
+//             return res.status(404).send("Reseller not found");  
+//         }  
+//         const resellers = await Reseller.findOne({ username });  
+//         if (!resellers) {  
+//             return res.status(404).send("Reseller data not found in the database");  
+//         }  
 
-        // Create a new DealerDelivery entry  
-        const Cylinderdeliverydata = new DealerDelivery({  
-            username,  
-            dealerdeliverycylinderType: cylinderType,  
-            dealerdeliveryfullCylinder: fullCylinder,  
-            dealerdeliveryemptyCylinder: emptyCylinder  
-        });  
-        await Cylinderdeliverydata.save();  
+//         // Create a new DealerDelivery entry  
+//         const Cylinderdeliverydata = new DealerDelivery({  
+//             username,  
+//             dealerdeliverycylinderType: cylinderType,  
+//             dealerdeliveryfullCylinder: fullCylinder,  
+//             dealerdeliveryemptyCylinder: emptyCylinder  
+//         });  
+//         await Cylinderdeliverydata.save();  
 
-        dealerdata.CylinderDelivery.push(Cylinderdeliverydata);  
-        await dealerdata.save();  
+//         dealerdata.CylinderDelivery.push(Cylinderdeliverydata);  
+//         await dealerdata.save();  
 
-        return res.status(201).json(dealerdata); 
-    } catch (err) {  
-        console.error("Error:", err.message);  
-        return res.status(500).json({ message: "Server Error", error: err.message });  
-    }  
-};
+//         return res.status(201).json(dealerdata); 
+//     } catch (err) {  
+//         console.error("Error:", err.message);  
+//         return res.status(500).json({ message: "Server Error", error: err.message });  
+//     }  
+// };
 
+// const createdata = async (req, res) => {
+//     const { cylinderType, fullCylinder, emptyCylinder } = req.body;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const createdata = async (req, res) => {
-    const { cylinderType, fullCylinder, emptyCylinder } = req.body;
-
-    try {
-        const UserId = req.user._id
-        const username = await Dealer.findById(UserId) || await Reseller.findById(UserId)
-        if(!username)
-        {
-            return res.status(404).send("Invalid User from database")
-        }
+//     try {
+//         const UserId = req.user._id
+//         const username = await Dealer.findById(UserId) || await Reseller.findById(UserId)
+//         if(!username)
+//         {
+//             return res.status(404).send("Invalid User from database")
+//         }
             
-        const Cylinderdeliverydata =new CylinderData({cylinderType, fullCylinder, emptyCylinder})
-        await Cylinderdeliverydata.save()
+//         const Cylinderdeliverydata =new CylinderData({cylinderType, fullCylinder, emptyCylinder})
+//         await Cylinderdeliverydata.save()
 
 
-        let individualCylinderType = await IndividualCylinderType.findOne();
-        if (!individualCylinderType) {
-            individualCylinderType = new IndividualCylinderType({
-                cylinder5kg: [],
-                cylinder10kg: [],
-                cylinder15kg: []
-            });
-        }
+//         let individualCylinderType = await IndividualCylinderType.findOne();
+//         if (!individualCylinderType) {
+//             individualCylinderType = new IndividualCylinderType({
+//                 cylinder5kg: [],
+//                 cylinder10kg: [],
+//                 cylinder15kg: []
+//             });
+//         }
 
-        let targetCylinderArray;
-        if (cylinderType === "5kg") {
-            targetCylinderArray = individualCylinderType.cylinder5kg;
-        } else if (cylinderType === "10kg") {
-            targetCylinderArray = individualCylinderType.cylinder10kg;
-        } else if (cylinderType === "15kg") {
-            targetCylinderArray = individualCylinderType.cylinder15kg;
-        } else {
-            return res.status(400).send("Invalid Cylinder Type");
-        }
+//         let targetCylinderArray;
+//         if (cylinderType === "5kg") {
+//             targetCylinderArray = individualCylinderType.cylinder5kg;
+//         } else if (cylinderType === "10kg") {
+//             targetCylinderArray = individualCylinderType.cylinder10kg;
+//         } else if (cylinderType === "15kg") {
+//             targetCylinderArray = individualCylinderType.cylinder15kg;
+//         } else {
+//             return res.status(400).send("Invalid Cylinder Type");
+//         }
 
-        let existingEntry = targetCylinderArray.length > 0 ? targetCylinderArray[0] : null;
+//         let existingEntry = targetCylinderArray.length > 0 ? targetCylinderArray[0] : null;
 
-        if (existingEntry) {
-            existingEntry.fullCylinder += fullCylinder;
-            existingEntry.emptyCylinder -= fullCylinder;
-            existingEntry.fullCylinder -= emptyCylinder;
-            existingEntry.emptyCylinder += emptyCylinder;
-        } else {
-            targetCylinderArray.push({
-                fullCylinder: fullCylinder,
-                emptyCylinder: -fullCylinder
-            });
-        }
+//         if (existingEntry) {
+//             existingEntry.fullCylinder += fullCylinder;
+//             existingEntry.emptyCylinder -= fullCylinder;
+//             existingEntry.fullCylinder -= emptyCylinder;
+//             existingEntry.emptyCylinder += emptyCylinder;
+//         } else {
+//             targetCylinderArray.push({
+//                 fullCylinder: fullCylinder,
+//                 emptyCylinder: -fullCylinder
+//             });
+//         }
 
-        await individualCylinderType.save();
+//         await individualCylinderType.save();
 
-      username.TotalCylinder.push(individualCylinderType)
-      username.CylinderDelivery.push(Cylinderdeliverydata)
-      await username.save()
+//       username.TotalCylinder.push(individualCylinderType)
+//       username.CylinderDelivery.push(Cylinderdeliverydata)
+//       await username.save()
 
-        return res.status(201).send({ message: "Cylinder Data Added Successfully", username });
-    } catch (err) {
-        console.error("Error:", err.message);
-        return res.status(500).send(err.message);
-    }
-};
+//         return res.status(201).send({ message: "Cylinder Data Added Successfully", username });
+//     } catch (err) {
+//         console.error("Error:", err.message);
+//         return res.status(500).send(err.message);
+//     }
+// };
 
 // const getdata = async (req, res) => {
 //     try {
@@ -260,6 +236,6 @@ const createdata = async (req, res) => {
 //     }
 // };
 
-module.exports = { postdealercylinderpurchase ,postdealerdelivery};
+module.exports = { postdealercylinderpurchase };
 
 // createdata, getdata, deletedata, updatedata, typegetdata,
